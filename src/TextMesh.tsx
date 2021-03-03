@@ -99,7 +99,7 @@ export const TextMesh: React.FC<{frame: number; fps: number}> = ({
 										},
 									]}
 								/>
-								<meshBasicMaterial color="rgb(29, 127, 192)" />
+								<meshBasicMaterial color="#4290E7" />
 							</mesh>
 							<mesh ref={surfaceRefs[i]}>
 								<textGeometry
