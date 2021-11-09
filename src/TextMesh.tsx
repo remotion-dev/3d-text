@@ -1,46 +1,46 @@
+import {useFrame} from '@react-three/fiber';
 import React, {createRef, Fragment, useMemo} from 'react';
-import {useFrame} from 'react-three-fiber';
 import {interpolate, spring} from 'remotion';
 import * as THREE from 'three';
 import JSONfont from './Bold.json';
 
-const text = 'remotion';
-const characters = text.split('');
-const letterSpacing = 0.1;
-
-export const TextMesh: React.FC<{frame: number; fps: number}> = ({
-	frame,
-	fps,
-}) => {
+export const TextMesh: React.FC<{
+	frame: number;
+	fps: number;
+	text: string;
+	position: number;
+}> = ({frame, fps, text, position}) => {
+	const characters = text.split('');
+	const letterSpacing = 0.1;
 	const surfaceRefs = useMemo(
 		() =>
 			new Array(characters.length)
 				.fill(true)
 				.map(() => createRef<JSX.IntrinsicElements['mesh']>()),
-		[]
+		[characters.length]
 	);
 	const characterRefs = useMemo(
 		() =>
 			new Array(characters.length)
 				.fill(true)
 				.map(() => createRef<JSX.IntrinsicElements['mesh']>()),
-		[]
+		[characters.length]
 	);
 
 	// load in font
 	const font = useMemo(() => new THREE.FontLoader().parse(JSONfont), []);
-	const height = 50;
+	const height = 60;
 	const progress = (i: number) =>
 		spring({
-			frame: frame - i,
+			frame,
 			fps,
 			config: {
 				damping: 15,
-				mass: 1.4,
+				mass: 1,
 			},
 		});
 	const z = (i: number) => interpolate(progress(i), [0, 1], [-40, 0]);
-	const size = 2.3;
+	const size = 2;
 
 	// actions to perform in current frame
 	useFrame(() => {
@@ -69,22 +69,11 @@ export const TextMesh: React.FC<{frame: number; fps: number}> = ({
 	});
 
 	const rotateX = -Math.PI / 10;
-	const rotateY = interpolate(
-		spring({
-			frame,
-			fps,
-			config: {
-				damping: 200,
-				mass: 6,
-			},
-		}),
-		[0, 1],
-		[-Math.PI / 10, Math.PI / 10]
-	);
+	const rotateY = Math.PI / 10;
 
 	return (
 		<>
-			<scene rotation={[rotateX, rotateY, 0.09]} position={[0.5, 0, 0]}>
+			<scene rotation={[rotateX, rotateY, 0.1]} position={[0.5, position, 0]}>
 				{characters.map((char, i) => {
 					return (
 						<Fragment key={i}>
@@ -99,7 +88,7 @@ export const TextMesh: React.FC<{frame: number; fps: number}> = ({
 										},
 									]}
 								/>
-								<meshBasicMaterial color="#4290E7" />
+								<meshBasicMaterial color="#3d5de7" />
 							</mesh>
 							<mesh ref={surfaceRefs[i]}>
 								<textGeometry
