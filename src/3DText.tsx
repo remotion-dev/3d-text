@@ -18,12 +18,13 @@ export const ThreeDText: React.FC = () => {
 	}, [handle]);
 	return (
 		<ThreeCanvas
-			linear
+		linear
+		flat
 			orthographic
 			width={width}
 			height={height}
 			style={{
-				backgroundColor: 'white',
+				backgroundColor: 'yellow',
 			}}
 			camera={{
 				zoom: 90,
@@ -31,9 +32,7 @@ export const ThreeDText: React.FC = () => {
 			}}
 			onCreated={onCreated}
 		>
-			<TextMesh position={2} frame={frame} fps={fps} text="NEW" />
-			<TextMesh position={-0.5} frame={frame - 5} fps={fps} text="APP" />
-			<TextMesh position={-3} frame={frame - 10} fps={fps} text="ALERT" />
+			<TextMesh  frame={frame - 5}  text="4" />
 		</ThreeCanvas>
 	);
 };

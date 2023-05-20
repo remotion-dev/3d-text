@@ -22,15 +22,15 @@ export const HelloWorld: React.FC<{
 	const transitionStart = 25;
 
 	return (
-		<div style={{flex: 1, backgroundColor: 'white'}}>
+		<div style={{flex: 1, backgroundColor: 'yellow'}}>
 			<div style={{opacity}}>
-				<Sequence from={0} durationInFrames={videoConfig.durationInFrames}>
+				<Sequence  durationInFrames={videoConfig.durationInFrames}>
 					<Logo transitionStart={transitionStart} />
 				</Sequence>
-				<Sequence from={transitionStart + 10} durationInFrames={Infinity}>
+				<Sequence from={transitionStart + 10} >
 					<Title titleText={titleText} titleColor={titleColor} />
 				</Sequence>
-				<Sequence from={transitionStart + 50} durationInFrames={Infinity}>
+				<Sequence from={transitionStart + 50} >
 					<Subtitle />
 				</Sequence>
 			</div>

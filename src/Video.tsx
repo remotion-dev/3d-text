@@ -7,7 +7,7 @@ export const RemotionVideo: React.FC = () => {
 			<Composition
 				id="3DText"
 				component={ThreeDText}
-				durationInFrames={60}
+				durationInFrames={120}
 				fps={30}
 				width={1080}
 				height={1080}

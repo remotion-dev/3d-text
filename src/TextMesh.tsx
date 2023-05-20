@@ -1,102 +1,103 @@
 import {extend, useFrame} from '@react-three/fiber';
-import React, {createRef, Fragment, useMemo} from 'react';
+import React, {createRef, Fragment, useMemo, useRef, useState} from 'react';
 import {interpolate, spring} from 'remotion';
 import {TextGeometry} from 'three-stdlib';
 import {FontLoader} from 'three/examples/jsm/loaders/FontLoader.js';
 import JSONfont from './Bold.json';
+import {  DoubleSide } from 'three';
 
 extend({TextGeometry});
 
 export const TextMesh: React.FC<{
 	frame: number;
-	fps: number;
 	text: string;
-	position: number;
-}> = ({frame, fps, text, position}) => {
-	const characters = text.split('');
-	const letterSpacing = 0.1;
-	const surfaceRefs = useMemo(
-		() =>
-			new Array(characters.length)
-				.fill(true)
-				.map(() => createRef<JSX.IntrinsicElements['mesh']>()),
-		[characters.length]
-	);
-	const characterRefs = useMemo(
-		() =>
-			new Array(characters.length)
-				.fill(true)
-				.map(() => createRef<JSX.IntrinsicElements['mesh']>()),
-		[characters.length]
-	);
+}> = ({frame,  text, }) => {
+	const surfaceRefs = useRef<JSX.IntrinsicElements['mesh']>();
+	const characterRef = useRef<JSX.IntrinsicElements['mesh']>();
+	const [shape, setShape] = useState(null)
 
-	// load in font
+	// Load in font
 	const font = useMemo(() => new FontLoader().parse(JSONfont), []);
-	const height = 60;
-	const progress = (i: number) =>
-		spring({
-			frame,
-			fps,
-			config: {
-				damping: 15,
-				mass: 1,
-			},
-		});
-	const z = (i: number) => interpolate(progress(i), [0, 1], [-40, 0]);
+	const depth = 0.5;
 	const size = 2;
 
-	// actions to perform in current frame
+	const group = useRef<JSX.IntrinsicElements['group']>(null);
+
+
+	// Actions to perform in current frame
 	useFrame(() => {
-		const widths: number[] = [];
-		characters.forEach((char, i) => {
-			const geometry = characterRefs[i].current?.geometry;
+			const geometry = characterRef.current?.geometry;
 
 			geometry?.computeBoundingBox();
 			const width =
 				(geometry?.boundingBox?.max?.x as number) -
 				(geometry?.boundingBox?.min?.x as number);
-			widths.push(width);
-		});
-		const totalWidth =
-			widths.reduce((a, b) => a + b + letterSpacing, 0) + letterSpacing;
-		for (let i = 0; i < characters.length; i++) {
-			const pos =
-				widths.slice(0, i).reduce((a, b) => a + b, 0) +
-				i * letterSpacing -
-				totalWidth / 2;
-			surfaceRefs[i].current.position.x = pos;
-			surfaceRefs[i].current.position.z = z(i) + 0.01;
-			characterRefs[i].current.position.x = pos;
-			characterRefs[i].current.position.z = -height + z(i);
-		}
+				const height =
+				(geometry?.boundingBox?.max?.y as number) -
+				(geometry?.boundingBox?.min?.y as number);
+			surfaceRefs.current.position.x = -width / 2;
+			surfaceRefs.current.position.y = -height / 2;
+			surfaceRefs.current.position.z =  0.01;
+			characterRef.current.position.x =  -width / 2;
+			characterRef.current.position.y = -height / 2;
+			characterRef.current.position.z = -depth;
+
+
+			// Shape const holeShapes = [];
+			const [shape] = font.generateShapes( '4', 2 );
+
+			const holeShapes = [];
+
+
+						if ( shape.holes && shape.holes.length > 0 ) {
+
+							for ( let j = 0; j < shape.holes.length; j ++ ) {
+
+								const hole = shape.holes[ j ];
+								holeShapes.push( hole );
+
+								const points = shape.getPoints();
+								setShape(points)
+
+								if (bufGeo.current) {
+									bufGeo.current.setFromPoints(points)
+									lineRef.current.position.x = -width / 2
+									lineRef.current.position.y = -height / 2
+									lineRef.current.position.z = -depth - 0.000001;
+
+								}
+
+							}
+
+						}
+
 	});
 
-	const rotateX = -Math.PI / 10;
-	const rotateY = Math.PI / 10;
+	const bufGeo = useRef();
+	const lineRef = useRef();
+
+	const rotateX = -Math.PI / 10 * frame / 10;
 
 	return (
 		<>
-			<scene rotation={[rotateX, rotateY, 0.1]} position={[0.5, position, 0]}>
-				{characters.map((char, i) => {
-					return (
-						<Fragment key={i}>
-							<mesh ref={characterRefs[i]}>
+			<group ref={group} rotation={[ 0, rotateX, 0]} >
+							<mesh ref={characterRef}>
 								<textGeometry
 									args={[
-										char,
+										text,
 										{
 											font,
 											size,
-											height,
+											height: depth,
 										},
 									]}
 								/>
-								<meshBasicMaterial color="#03adfc" />
+								<meshBasicMaterial color={0xff0000} />
 							</mesh>
-							<mesh ref={surfaceRefs[i]}>
+							<mesh ref={surfaceRefs} >
 								<textGeometry
 									args={[
-										char,
+										text,
 										{
 											font,
 											size,
@@ -104,12 +105,19 @@ export const TextMesh: React.FC<{
 										},
 									]}
 								/>
-								<meshBasicMaterial color="white" />
+								<meshBasicMaterial color={0xFFFFFF00} />
 							</mesh>
-						</Fragment>
-					);
-				})}
-			</scene>
+							{shape ? (
+
+<object3D>
+
+							<line  ref={lineRef}>
+								<bufferGeometry ref={bufGeo} attach="geometry"  />
+								<lineBasicMaterial linewidth={0.01} color={0x000000} />
+							</line>
+</object3D>
+							) : null}
+			</group>
 		</>
 	);
 };
