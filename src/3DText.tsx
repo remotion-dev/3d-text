@@ -20,19 +20,16 @@ export const ThreeDText: React.FC = () => {
 		<ThreeCanvas
 		linear
 		flat
-			orthographic
 			width={width}
 			height={height}
 			style={{
-				backgroundColor: 'yellow',
 			}}
 			camera={{
-				zoom: 90,
-				near: -40,
+				
 			}}
 			onCreated={onCreated}
 		>
-			<TextMesh  frame={frame - 5}  text="4" />
+			<TextMesh  frame={frame}  text="4" />
 		</ThreeCanvas>
 	);
 };
