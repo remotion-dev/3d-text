@@ -20,17 +20,17 @@ export const TextMesh: React.FC<{
 			new Array(characters.length)
 				.fill(true)
 				.map(() => createRef<JSX.IntrinsicElements['mesh']>()),
-		[characters.length]
+		[characters.length],
 	);
 	const characterRefs = useMemo(
 		() =>
 			new Array(characters.length)
 				.fill(true)
 				.map(() => createRef<JSX.IntrinsicElements['mesh']>()),
-		[characters.length]
+		[characters.length],
 	);
 
-	// load in font
+	// Load in font
 	const font = useMemo(() => new FontLoader().parse(JSONfont), []);
 	const height = 60;
 	const progress = (i: number) =>
@@ -45,7 +45,7 @@ export const TextMesh: React.FC<{
 	const z = (i: number) => interpolate(progress(i), [0, 1], [-40, 0]);
 	const size = 2;
 
-	// actions to perform in current frame
+	// Actions to perform in current frame
 	useFrame(() => {
 		const widths: number[] = [];
 		characters.forEach((char, i) => {
