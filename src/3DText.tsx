@@ -31,9 +31,9 @@ export const ThreeDText: React.FC = () => {
 			}}
 			onCreated={onCreated}
 		>
-			<TextMesh position={2} frame={frame} fps={fps} text="NEW" />
-			<TextMesh position={-0.5} frame={frame - 5} fps={fps} text="APP" />
-			<TextMesh position={-3} frame={frame - 10} fps={fps} text="ALERT" />
+			<TextMesh position={2} frame={frame} fps={fps} text="Text" />
+			<TextMesh position={-0.5} frame={frame - 5} fps={fps} text="in" />
+			<TextMesh position={-3} frame={frame - 10} fps={fps} text="3D" />
 		</ThreeCanvas>
 	);
 };
